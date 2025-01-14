@@ -1,5 +1,20 @@
 import mongoose from "mongoose";
 
+const commentSchema = new mongoose.Schema({
+  text: {
+    type: String,
+    required: true, // The comment content
+  },
+  user: {
+    type: String,
+    required: true, // The username or ID of the commenter
+  },
+  date: {
+    type: Date,
+    default: Date.now, // Date when the comment was added
+  },
+});
+
 const articleSchema = new mongoose.Schema({
   author: {
     type: String,
@@ -37,10 +52,7 @@ const articleSchema = new mongoose.Schema({
     type: Number,
     default: 0, // Number of likes
   },
-  comments: {
-    type: Number,
-    default: 0, // Number of comments
-  },
+  comments: [commentSchema], // Array of comments
   shares: {
     type: Number,
     default: 0, // Number of shares

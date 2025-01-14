@@ -12,23 +12,26 @@ export const fetchArticles = async (req, res) => {
 };
 
 export const addComment = async (req, res) => {
-  const { id } = req.params;
-  const { comment } = req.body;
+  const { id } = req.params; // Article ID from URL
+  const { text, user } = req.body; // Comment details from request body
 
   try {
     const article = await Article.findById(id);
     if (!article) {
       return res.status(404).json({ error: "Article not found" });
     }
-    article.comments.push({ text: comment });
+
+    // Add the new comment to the article's comments array
+    article.comments.push({ text, user });
     await article.save();
-    res.status(200).json(article);
+
+    res.status(200).json({ message: "Comment added successfully", article });
   } catch (error) {
+    console.error("Error adding comment:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
 
-// Increment likes for an article
 export const incrementLikes = async (req, res) => {
   const { id } = req.params;
 
