@@ -10,3 +10,36 @@ export const fetchArticles = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
+export const addComment = async (req, res) => {
+  const { id } = req.params;
+  const { comment } = req.body;
+
+  try {
+    const article = await Article.findById(id);
+    if (!article) {
+      return res.status(404).json({ error: "Article not found" });
+    }
+    article.comments.push({ text: comment });
+    await article.save();
+    res.status(200).json(article);
+  } catch (error) {
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+// Increment likes for an article
+export const updateArticleStats = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { field } = req.body; // field can be 'likes', 'comments', or 'shares'
+    const article = await Article.findByIdAndUpdate(
+      id,
+      { $inc: { [field]: 1 } },
+      { new: true }
+    );
+    res.status(200).json(article);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to update article stats" });
+  }
+};
