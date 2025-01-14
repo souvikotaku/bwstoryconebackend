@@ -29,17 +29,20 @@ export const addComment = async (req, res) => {
 };
 
 // Increment likes for an article
-export const updateArticleStats = async (req, res) => {
+export const incrementLikes = async (req, res) => {
+  const { id } = req.params;
+
   try {
-    const { id } = req.params;
-    const { field } = req.body; // field can be 'likes', 'comments', or 'shares'
     const article = await Article.findByIdAndUpdate(
       id,
-      { $inc: { [field]: 1 } },
+      { $inc: { likes: 1 } },
       { new: true }
     );
+    if (!article) {
+      return res.status(404).json({ error: "Article not found" });
+    }
     res.status(200).json(article);
   } catch (error) {
-    res.status(500).json({ error: "Failed to update article stats" });
+    res.status(500).json({ error: "Internal Server Error" });
   }
 };
