@@ -8,7 +8,7 @@ import {
 const router = express.Router();
 
 router.get("/fetch", fetchArticles);
-router.post("/:id/comments", addComment);
-router.post("/:id/likes", incrementLikes);
+// router.post("/:id/comments", addComment);
+// router.post("/:id/likes", incrementLikes);
 
 export default router;
