@@ -11,41 +11,35 @@ export const fetchArticles = async (req, res) => {
   }
 };
 
-// export const addComment = async (req, res) => {
-//   const { id } = req.params; // Article ID from URL
-//   const { text, user } = req.body; // Comment details from request body
+export const addComment = async (req, res) => {
+  try {
+    const { articleId } = req.params; // Get article ID from route parameters
+    const { text, user } = req.body; // Get comment text and user from the request body
 
-//   try {
-//     const article = await Article.findById(id);
-//     if (!article) {
-//       return res.status(404).json({ error: "Article not found" });
-//     }
+    // Find the article by ID and add the comment to the comments array
+    const article = await Article.findById(articleId);
 
-//     // Add the new comment to the article's comments array
-//     article.comments.push({ text, user });
-//     await article.save();
+    if (!article) {
+      return res.status(404).json({ error: "Article not found" });
+    }
 
-//     res.status(200).json({ message: "Comment added successfully", article });
-//   } catch (error) {
-//     console.error("Error adding comment:", error);
-//     res.status(500).json({ error: "Internal Server Error" });
-//   }
-// };
+    // Create a new comment object
+    const newComment = {
+      text,
+      user,
+      date: new Date(),
+    };
 
-// export const incrementLikes = async (req, res) => {
-//   const { id } = req.params;
+    // Add the new comment to the article's comments array
+    article.comments.push(newComment);
 
-//   try {
-//     const article = await Article.findByIdAndUpdate(
-//       id,
-//       { $inc: { likes: 1 } },
-//       { new: true }
-//     );
-//     if (!article) {
-//       return res.status(404).json({ error: "Article not found" });
-//     }
-//     res.status(200).json(article);
-//   } catch (error) {
-//     res.status(500).json({ error: "Internal Server Error" });
-//   }
-// };
+    // Save the updated article
+    await article.save();
+
+    // Return the updated article with the new comment
+    res.status(200).json(article);
+  } catch (error) {
+    console.error("Error adding comment:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
